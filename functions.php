@@ -112,10 +112,13 @@ function load_songs($track_list){
 			$track_title = $tra->title;
 			// $link = $tra->stream_url;
 			$this_id = $tra->id;
+			$this_duration = $tra->duration;
+			$artwork = $tra->artwork_url;
+			$wave = $tra->waveform_url;
 			// echo $this_id;
 			// var_dump($tra);
-
-			$the_str = '<li data-ID="'.$this_id.'">'.$track_title.'</li>';
+			// $the_str = '<li data-art="'.$wave.'" data-duration="'.$this_duration.'"data-ID="'.$this_id.'"><div class="art-work" style="background-image: url('".$artwork."')"></div>'.$track_title.'</li>';
+			$the_str = '<li data-art="'.$wave.'" data-duration="'.$this_duration.'"data-ID="'.$this_id.'">'.$track_title.'</li>';
 
 			array_push($track_arry, $the_str);
 		}

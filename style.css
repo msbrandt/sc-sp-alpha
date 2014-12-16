@@ -20,7 +20,7 @@ h1{
 
 section{
 	width: 100%;
-	height: 600px;
+	height: 800px;
 	background: #999;
 	position: relative;
 }
@@ -33,14 +33,68 @@ section{
 	position: relative;
 }
 .vinyl{
-	height: 300px;
-	width: 300px;
+	height: 400px;
+	width: 400px;
 	border-radius: 200px;
-	background: #333;
 	position: absolute;
 	left: 0; right: 0;
 	top: 50px;
 	margin: auto;
+	overflow: hidden;
+	/*background-image: url('img/back.png');*/
+	background-image: url('img/back2.svg');
+	background-repeat: repeat;
+}
+.vinyl::before{
+	height: 300px;
+	width: 300px;
+	position: absolute;
+	left: 0; right: 0;
+	top: 0; bottom: 0;
+	margin: auto;
+	background: #ccc;
+	content: "";
+	border-radius: 400px;
+}
+.vinyl::after{
+	height: 200px;
+	width: 200px;
+	position: absolute;
+	left: 0; right: 0;
+	top: 0; bottom: 0;
+	margin: auto;
+	background: #333;
+	content: "";
+	border-radius: 400px;
+	border: 5px solid #FF6500;	
+}
+.vinyl.acvitve-v::after{
+	border-color: #0ff;
+}
+.vinyl.acvitve-v{
+	-webkit-animation: spin 5s infinite linear;
+	-moz-animation: spin 5s infinite linear;
+	-ms-animation: spin 5s infinite linear;
+	animation: spin 5s infinite linear;
+}
+.time-display{
+	position: absolute;
+	left: 0; right: 0;
+	top: -300px; bottom: 0;
+	margin: auto;
+	z-index: 99999;
+	height: 100px;
+	width: 185px;
+	text-align: center;
+}
+.time-display span{
+	line-height: 100px;
+	font-size: 23px;
+	color: #ccc;
+	font-family: 'digital_dream_skewregular';
+}
+.vinyl hr{
+	margin: 15% 0;
 }
 .display{
 	position: absolute;
@@ -54,6 +108,18 @@ section{
 	font-family: 'digital_dream_skewregular';
 	padding: 10px;
 }
+.progres{
+	height: 88px;
+	width: 90%;
+	background-color: #333;
+	position: absolute;
+	left: 0; right: 0;
+	margin: auto;
+	bottom: 150px;
+	background-size: 100%;
+	background-position: center;
+	background-repeat: no-repeat;
+}
 .display h5{
 	padding: 0 0 5px 0;
 	margin: 0;
@@ -62,10 +128,16 @@ section{
 	height: 100px;
 	width: 100px;
 	border-radius: 100px;
-	background: #333;
+	background: #aaa;
 	position: absolute;
 	left: 20px;
 	bottom: 25px;
+	border: 1px solid #333;
+	transition: all .25s;
+
+}
+.toggle-button:hover{
+	border-color: #0f0;
 }
 .toggle-button div{
 	font-size: 75px;
@@ -146,10 +218,10 @@ section{
 }
 
 .sc-stop{
-	background: #f00;
+	/*background: #f00;*/
 }
 .sc-play{
-	background: #0f0;
+	/*background: #0f0;*/
 }
 #volum{
 	position: absolute;
@@ -163,7 +235,7 @@ section{
 }
 .v-slider{
 	width: 250px;
-	transform: rotate(90deg);
+	transform: rotate(270deg);
 }
 .v-slider#v-a{
 	position: absolute;
@@ -182,14 +254,43 @@ section{
 	height: 100%;
 }
 
-input[type='range'] {
+
+input.wave-prog[type='range']{
+	-webkit-appearance: none;
+	/*background-color: transparent;*/
+	/*background-color: #FF6500;*/
+
+	height: 100%;
+}
+
+input.wave-prog[type='range']::-moz-range-track {
+	-moz-appearance: none;
+	border-radius: 5px;
+	box-shadow: inset 0 0 5px #333;
+	/*background-color: #333;*/
+	/*background-color: #0f0;*/
+	height: 0;
+	width: inherit;
+}
+
+input.wave-prog[type='range']::-moz-range-thumb {
+	-moz-appearance: none;
+	background-color: #FF6500;
+	border: 1px solid #FF6500;
+	height: 100%;
+	width: 0px;
+}
+
+
+
+input[type='range']:not(.wave-prog) {
 	-webkit-appearance: none;
 	border-radius: 5px;
 	box-shadow: inset 0 0 5px #333;
 	background-color: #999;
 	vertical-align: middle;
 }
-input[type='range']::-moz-range-track {
+input[type='range']:not(.wave-prog)::-moz-range-track {
 	-moz-appearance: none;
 	border-radius: 5px;
 	box-shadow: inset 0 0 5px #333;
@@ -197,7 +298,7 @@ input[type='range']::-moz-range-track {
 	height: inherit;
 	width: inherit;
 }
-input[type='range']::-webkit-slider-thumb {
+input[type='range']:not(.wave-prog)::-webkit-slider-thumb {
 	-webkit-appearance: none !important;
 	border-radius: 5px;
 	background-color: #FFF;
@@ -206,7 +307,7 @@ input[type='range']::-webkit-slider-thumb {
 	height: 75px;
 	width: 15px;
 }
-input[type='range']::-moz-range-thumb {
+input[type='range']:not(.wave-prog)::-moz-range-thumb {
 	-moz-appearance: none;
 	border-radius: 5px;
 	background-color: #FFF;
@@ -215,7 +316,7 @@ input[type='range']::-moz-range-thumb {
 	height: 75px;
 	width: 15px;
 }
-input[type='range']:focus{
+input[type='range']:not(.wave-prog):focus{
 	outline: none;
 }
 @font-face {
@@ -228,4 +329,16 @@ input[type='range']:focus{
     font-weight: normal;
     font-style: normal;
 
+}
+@-moz-keyframes spin {
+    from { -moz-transform: rotate(0deg); }
+    to { -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
 }

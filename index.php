@@ -9,50 +9,63 @@
 
 <section>
 	<div class="deck" id="deck-a">
-		<audio class="audio" id="au-a" src="" controls="controls"></audio>
+		<audio class="audio" id="au-a" src=""></audio>
 
 		<div class="active-deck-button"><div class="glyphicon"></div></div>
-		<div class="vinyl"></div>
-		<div class="progres">
+			<div class="time-display">
+				<span class="current-time">0:00</span>
+				<span>/</span>
+				<span class="total-time">0:00</span>
+			</div>
+		<div class="vinyl">
 
 		</div>
+		<div class="progres">
+			<input class="wave-prog" value="0" id="wave-a" type="range" min='0' max="">
+			<div class="fill-proj" id="f-a"></div>
+		</div>
 		<div class="display">
-			<h5>Now Playing:</h5>
 			<div class="now-playing">none</div>
 		</div>
 		<div class="toggle-button sc-stop" id="tog-a">
-			<div class="glyphicon glyphicon-pause"></div>	
+			<div class="glyphicon glyphicon-play"></div>	
 		</div>
 	</div>
 	<div class="deck" id="deck-b">
-		<audio class="audio" id="au-b" src="" controls="controls"></audio>
+		<audio class="audio" id="au-b" src=""></audio>
 
 		<div class="active-deck-button"><div class="glyphicon"></div></div>
-		<div class="vinyl"></div>
-		<div class="progres">
+			<div class="time-display">
+				<span class="current-time">0:00</span>
+				<span>/</span>
+				<span class="total-time">0:00</span>
+			</div>
+		<div class="vinyl">
 
 		</div>
+		<div class="progres">
+			<input class="wave-prog" value="0" id="wave-b" type="range" min='0' max="">
+			<div class="fill-proj" id="f-b"></div>
+		</div>
 		<div class="display">
-			<h5>Now Playing:</h5>
 			<div class="now-playing">none</div>
 		</div>
 		<div class="toggle-button sc-stop" id="tog-b">
-			<div class="glyphicon glyphicon-pause"></div>	
+			<div class="glyphicon glyphicon-play"></div>	
 		</div>
 	</div>
 	<div id="volum">
 		<div class='vol-container'>
 			<div class="v-slider" id="v-a">
-				<input type="range" min="0" max="50" value="0" step="1" class="vo-slider" id='vo-a'>
-
+				<input type="range" min="0" max="1" value="0" step="0.05" class="vo-slider" id='vo-a'>
 			</div>
 			<div class="v-slider" id="v-b">
-				<input type="range" min="0" max="50" value="50" step="-1" class="vo-slider" id='vo-b'>		
+				<input type="range" min="0" max="1" value="0" step="0.05" class="vo-slider" id='vo-b'>		
 			</div>
 		</div>
 	</div>
 	<div id="slider">
-		<input type="range" min="-50" max="50" value="0" step="1" id="sli">
+		<input type="range" min="-1" max="1" value="0" step=".05" id="sli">
 		<!-- <div></div> -->
 	</div>
 

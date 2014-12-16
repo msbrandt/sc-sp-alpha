@@ -34,10 +34,7 @@
 <div class="main_content">
        <header>
               <nav class="navbar-inverse my-nav" role="navigation">
-                     <div class="my-nav-container">
 
-                            <?php blank_nav(); ?>
-                     </div>
               </nav>
 
        </header>
