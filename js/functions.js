@@ -1,123 +1,153 @@
 jQuery(function($){
+	var decks = $('.deck'),
+		audios = decks.find('audio');
 	var fader = $('#sli');
-	var activate = $('.active-deck-button');
-	var toggle_buttons = $('.toggle-button');
-	var tracks = $('#loaded-playlist > ul > li');
-	var volume = $('.v-slider').children();
-	var audio_a = $('#au-a'),
-		audio_b = $('#au-b');
+	var activate_btn = $('.active-deck-button');
+	var toggle_btns = $('.toggle-button');
+	var loaded_tracks = $('#loaded-playlist > ul > li');
+	var volume_controls = $('.v-slider').children('.vo-slider');
 	var wave_scrub = $('.wave-prog');
 
-	SC.initialize({
-	  client_id: '7d9677620e4d860d055604be6c25d43a'
+
+	$(window).on('load', function(){
+		volume_controls.attr('value', 1);
+		fader.attr('value', 0);
+		wave_scrub.attr('value', 0);
 	});
 
-	volume.on('input', function(){
-		var this_slider = $(this),
-			volume_level = this_slider.val();
+	SC.initialize({
+  		client_id: '7d9677620e4d860d055604be6c25d43a'
+	});
 
-		if(this_slider.is('#vo-a')){
-			this_deck = $('#deck-a');
-		}else{
-			this_deck = $('#deck-b');
-		}
-		this_deck.find('audio').prop('volume', volume_level);
+	activate_btn.on('click', function(e){
+		var tog_btn = $(this),
+			act_this_deck = tog_btn.parent(),
+			the_vinyl = act_this_deck.find('.vinyl');
 
+		activate_btn.removeClass('active');
+		activate_btn.children().removeClass('glyphicon-remove-sign');
+		
+		tog_btn.addClass('active has-been');
+		tog_btn.children().addClass('glyphicon-remove-sign');
+
+		$('audio').removeClass('active-p');
+		the_vinyl.addClass('active-p');
+
+	});
+
+	loaded_tracks.on('click', function(e){
+		e.preventDefault();
+		var this_track_obj = $(this),
+			this_track_txt = this_track_obj.text(),
+			this_track_id = this_track_obj.data('id'),
+			this_duration = this_track_obj.data('duration'),
+			this_wave = this_track_obj.data('art');
+
+		var l_this_deck = $('.active-deck-button.active').parent(),
+			active_deck = l_this_deck.find('audio');
+
+		var dt_lb = l_this_deck.find('.total-time'),
+			wave_lb = l_this_deck.find('.progress');
+		
+		var text_durration = convert_time(this_duration);
+
+		dt_lb.text(text_durration);
+		wave_lb.css('background-image', 'url("'+this_wave+'")');
+		l_this_deck.find('.wave-prog').attr('max', this_duration).attr('value', 0);
+		l_this_deck.find('.now-playing').text(this_track_txt);
+		
+		SC.stream('tracks/'+this_track_id, function(sound){
+			var raw_url = sound.url,
+				split_url = raw_url.split('.com');
+				use_url = split_url[0]+'.com/'+split_url[1];
+			active_deck.prop('src', use_url);
+			// active_deck.prop('defaultPlaybackRate', 0.5);
+			// console.log(active_deck.prop('defaultPlaybackRate'));
+			active_deck.load();
+
+		});
+		
+	});
+
+	volume_controls.on('input', function(){
+		var this_control = $(this),
+			control_id = this_control.attr('id'),
+			vol_this_deck = $('section').find("[data-volume_control='"+control_id+"']"),
+			volume_level = this_control.val();
+
+		vol_this_deck.find('audio').prop('volume', volume_level);
 	});
 
 	fader.on('input', function(){
-		var the_val = parseFloat(fader.val());
-		var deck_a = document.getElementsByTagName('audio')[0],
-			deck_b = document.getElementsByTagName('audio')[1];
-
-		if(the_val < 0){
-			var change_val = 1+(the_val);
-			console.log(change_val)
-			$(deck_b).prop('volume', change_val);
-			// console.log(deck_b.volume);
-		}else{
-			var change_val = the_val;
-			console.log(change_val);
-			$(deck_a).prop('volume', change_val);
+		var fader_value = parseFloat(fader.val());
+		if(fader_value > 0){
+			var new_volume_level = 1,
+				silance_volume_level = 1 - fader_value;
+				fd_this_deck = $('#deck-b'),
+				silance_deck = $('#deck-a');
+		} else if(fader_value < 0){
+			var new_volume_level = 1,
+				silance_volume_level = 1 - (-fader_value),
+				fd_this_deck = $('#deck-a'),
+				silance_deck = $('#deck-b');
+		}else if(fader_value == 0){
+			var fd_this_deck = $('#deck-a'),
+				silance_deck = $('#deck-b'),
+				new_volume_level = 1,
+				silance_volume_level = 1;
 		}
-		// console.log(the_val);
+
+		fd_this_deck.find('audio').prop('volume', new_volume_level);
+		silance_deck.find('audio').prop('volume', silance_volume_level);
 	});
 
-	wave_scrub.on('change', function(){
-		var the_scrub = $(this),
-			this_deck = the_scrub.parent().parent(),
-			new_val = the_scrub.val();
-		console.log(the_scrub);
-		var this_ct = convert_time(new_val);
-		// if(this_deck.is('#deck-a')){
-		// 	// console.log(document.getElementsByTagName('audio')[0]);
-		$('#deck-a').find('audio')[0].currentTime = parseInt(new_val);
-		// }else{
-		// 	document.getElementsByTagName('audio')[1].currentTime = parseFloat(new_val);
-		// }
-		// the_audio.currentTime = new_val;
-		// console.log(parseInt(new_val));
+	wave_scrub.bind('change', function(){
+		var this_scrub = $(this),
+			wv_this_deck = this_scrub.parents(':eq(1)'),
+			wv_this_audio = wv_this_deck.find('audio'),
+			wv_ct_lb = wv_this_deck.find('.current-time'),
+			seek_value = parseInt(this_scrub.val())/1000;
+			
+		wv_this_deck.find('.wave-prog').attr('value', this_scrub.val());
+		wv_this_audio.prop('currentTime', seek_value);
+	});
 
-		this_deck.find('.wave-prog').attr('value', parseInt(new_val)); 
-		// this_deck.find('.current-time').text(this_ct);
+	audios.on('timeupdate', function(){
+		var this_audio = this,
+			ct_raw = this_audio.currentTime,
+			du_raw = this_audio.duration,
+			scrb_time = Math.ceil(ct_raw*1000),
+			prog = (ct_raw / du_raw) * 100;
+
 		
-		// console.log(this_deck);
-	});
+		var a_this_deck = $(this).parent(),
+			ct_lb = a_this_deck.find('.current-time'),
+			a_this_scrub = a_this_deck.find('.wave-prog'),
+			progress_bar = a_this_deck.find('.progress label');
 
-	audio_a.on('timeupdate', function(){
-		var this_audio = document.getElementsByTagName('audio')[0];
-		var ct_raw = this_audio.currentTime;
-		var dt_raw = this_audio.duration;
-		var ct = Math.floor(this_audio.currentTime);
-		var m = Math.floor(ct/60);
-		var s = ct - m *60;
-
-		if(s > -1 && s < 10){
-			var use_s = '0'+s;
-		}else{
-			var use_s = s;
-		}
-		var this_CT = m + ':' +use_s;
-		var scrb_time = ct_raw*1000;
-		var x = Math.floor((ct_raw / dt_raw)*100);
-
-		$('#deck-a .current-time').text(this_CT);
-
-		$('#deck-a .wave-prog').attr('value', scrb_time);
-
-		if(ct_raw >= dt_raw){
-			$('#deck-a .vinyl').removeClass('acvitve-v');
-			$('#tog-a').removeClass('sc-play').addClass('sc-stop');
-			$('#tog-a').children().removeClass('glyphicon-pause').addClass('glyphicon-play');
-		}
-	});
-
-	audio_b.on('timeupdate', function(){
-		var this_audio = document.getElementsByTagName('audio')[1];
-		var ct_raw = this_audio.currentTime;
-		var dt_raw = this_audio.duration;
-		var ct = Math.floor(this_audio.currentTime);
-		var m = Math.floor(ct/60);
-		var s = ct - m *60;
-
-		if(s > -1 && s < 10){
-			var use_s = '0'+s;
-		}else{
-			var use_s = s;
-		}
-		var current_time = m + ':' +use_s;
-		$('#deck-b .current-time').text(current_time);
+		var time_secs = Math.floor(ct_raw),
+			mins = Math.floor(time_secs/60),
+			secs_raw = time_secs - mins * 60;
 		
-		if(ct_raw >= dt_raw){
-			$('.vinyl').removeClass('acvitve-v');
-			$('#tog-b').removeClass('sc-play').addClass('sc-stop');
-			$('#tog-b').children().removeClass('glyphicon-pause').addClass('glyphicon-play');
+		if(secs_raw > -1 && secs_raw < 10){
+			var secs = '0'+secs_raw;
+		}else{
+			var secs = secs_raw;
+		}
+
+		var current_time = mins + ':' + secs;
+		ct_lb.text(current_time);
+		a_this_scrub.attr('value', scrb_time);
+		// progress_bar.css('width', prog + '%');
+
+		if(ct_raw >= du_raw){
+			a_this_deck.find('.vinyl').removeClass('acvitve-v');
+			a_this_deck.find('.toggle-button').removeClass('sc-play').addClass('sc-stop');
+			a_this_deck.find('.toggle-button').children().removeClass('glyphicon-pause').addClass('glyphicon-play');
 		}
 	});
 
-
-
-	toggle_buttons.click(function(e){
+	toggle_btns.click(function(e){
 		e.preventDefault();
 		var the_toggle = $(e.currentTarget),
 			the_player_id = the_toggle.parent().find('audio').attr('id'),
@@ -139,69 +169,6 @@ jQuery(function($){
 
 	});
 	
-	activate.click(function(e){
-		var tog_btn = $(this);
-		var the_deck = tog_btn.parent();
-		var the_vinyla = tog_btn.prev();
-		var the_player_ID = the_deck.find('audio').attr('id');
-		var the_player = document.getElementById(the_player_ID);
-		
-		if(!activate.hasClass('has-been')){
-			the_deck.find('audio').prop('volume', 1);
-			
-			if(the_deck.is('#deck-a')){
-				$('#v-a').children().attr('value', 1);
-			}else{
-				$('#v-b').children().attr('value', 1);
-			}
-		}
-
-		activate.removeClass('active');
-		activate.children().removeClass('glyphicon-remove-sign');
-		
-		tog_btn.addClass('active has-been');
-		tog_btn.children().addClass('glyphicon-remove-sign');
-
-		$('audio').removeClass('active-p');
-		the_vinyla.addClass('active-p');
-
-	});
-
-	tracks.click(function(e){
-		e.preventDefault();
-		var this_track_obj = $(this),
-			this_track_txt = this_track_obj.text(),
-			this_track_id = this_track_obj.data('id'),
-			this_duration = this_track_obj.data('duration'),
-			this_wave = this_track_obj.data('art');
-
-		var the_duration = convert_time(this_duration);
-
-		var to_add = $('.active-deck-button.active').parent().children('.display').children('.now-playing');
-		var this_deck = $('.active-deck-button.active').parent();
-		var	dt = this_deck.find('.total-time');
-		var wavee = this_deck.find('.progres');
-
-		var the_player_id = $('.audio.active-p').attr('id');
-		var this_player = document.getElementById(the_player_id);
-		console.log(this_duration);
-
-		to_add.text(this_track_txt);
-		dt.text(the_duration);
-
-		this_deck.find('.wave-prog').attr('max', this_duration);
-		wavee.css('background-image', 'url("'+this_wave+'")');
-		
-		SC.stream('tracks/'+this_track_id, function(sound){
-			var raw_url = sound.url,
-				split_url = raw_url.split('.com');
-				use_url = split_url[0]+'.com/'+split_url[1];
-
-			this_player.setAttribute("src", use_url);
-		});
-		this_player.load();
-		
-	});
 
 	function convert_time(time){
 		var minutes = Math.floor((time % 3600000) / 60000);
@@ -214,10 +181,7 @@ jQuery(function($){
 			}else{
 				var use_sec = '10';
 			}
-			// console.log(use_sec);
-			// if(sec.length=1){
-			// 	console.log('less');
-			// }
+
 		}else{
 			var use_sec = sec;
 		}

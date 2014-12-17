@@ -8,8 +8,8 @@
  get_header(); ?> 
 
 <section>
-	<div class="deck" id="deck-a">
-		<audio class="audio" id="au-a" src=""></audio>
+	<div class="deck" id="deck-a" data-volume_control="vo-a">
+		<audio class="audio" id="au-a"></audio>
 
 		<div class="active-deck-button"><div class="glyphicon"></div></div>
 			<div class="time-display">
@@ -17,12 +17,12 @@
 				<span>/</span>
 				<span class="total-time">0:00</span>
 			</div>
-		<div class="vinyl">
+		<div class="vinyl"></div>
 
-		</div>
-		<div class="progres">
+		<div class="progress">
 			<input class="wave-prog" value="0" id="wave-a" type="range" min='0' max="">
-			<div class="fill-proj" id="f-a"></div>
+			<!-- <label for="wave-a"></label> -->
+			
 		</div>
 		<div class="display">
 			<div class="now-playing">none</div>
@@ -31,8 +31,8 @@
 			<div class="glyphicon glyphicon-play"></div>	
 		</div>
 	</div>
-	<div class="deck" id="deck-b">
-		<audio class="audio" id="au-b" src=""></audio>
+	<div class="deck" id="deck-b" data-volume_control="vo-b">
+		<audio class="audio" id="au-b"></audio>
 
 		<div class="active-deck-button"><div class="glyphicon"></div></div>
 			<div class="time-display">
@@ -40,12 +40,13 @@
 				<span>/</span>
 				<span class="total-time">0:00</span>
 			</div>
-		<div class="vinyl">
+		<div class="vinyl"></div>
 
-		</div>
-		<div class="progres">
+		<div class="progress">
+
 			<input class="wave-prog" value="0" id="wave-b" type="range" min='0' max="">
-			<div class="fill-proj" id="f-b"></div>
+			<!-- <label for="wave-b"></label> -->
+
 		</div>
 		<div class="display">
 			<div class="now-playing">none</div>
@@ -79,5 +80,5 @@
 	?>
 	</ul>
 </div>
-
+<!-- <audio src='http://api.soundcloud.com/tracks/175656698/stream?client_id=7d9677620e4d860d055604be6c25d43a' controls="controls"></audio> -->
 <?php get_footer(); ?>
