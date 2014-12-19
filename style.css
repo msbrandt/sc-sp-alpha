@@ -105,7 +105,7 @@ section{
 	height: 100px;
 	width: 50%;
 	background: #333;
-	color: #ccc;
+	color: #F5F2F2;
 	font-family: 'digital_dream_skewregular';
 	padding: 10px;
 }
@@ -350,7 +350,47 @@ input[type='range']:not(.wave-prog):focus{
     from {transform:rotate(0deg);}
     to {transform:rotate(360deg);}
 }
+@media all and (max-width: 1370px){
+	section{
+		height: 735px;
+	}
+	.vinyl{
+		top: 50px;
+		left: -85px
+	}
 
+	#deck-b .vinyl{
+		left: unset;
+		right: 85px;
+	}
+	#volum{
+		top: 30px;
+	}
+	.time-display{
+		top: -265px;
+		left: -85px;
+	}
+	#deck-b .time-display{
+		left: unset;
+		right: 195px;
+	}
+	#loaded-playlist {
+	  bottom: 0;
+	  height: 200px;
+	  left: 0;
+	  margin: auto;
+	  position: absolute;
+	  right: 0;
+	  top: 40px;
+	  width: 355px;
+	  z-index: 999;
+	  border: 1px solid #333;
+	  text-align: center;
+	}
+
+
+
+}
 @media all and (max-width: 1024px){
 	.active-deck-button {
 	  height: 75px;

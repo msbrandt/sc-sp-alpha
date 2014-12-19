@@ -31,6 +31,7 @@
 			<div class="glyphicon glyphicon-play"></div>	
 		</div>
 	</div>
+
 	<div class="deck" id="deck-b" data-volume_control="vo-b">
 		<audio class="audio" id="au-b"></audio>
 
@@ -67,11 +68,9 @@
 	</div>
 	<div id="slider">
 		<input type="range" min="-1" max="1" value="0" step=".05" id="sli">
-		<!-- <div></div> -->
 	</div>
 
 </section>
-<div id="load"></div>
 <div id="loaded-playlist">
 	<ul>
 	<?php
@@ -80,5 +79,7 @@
 	?>
 	</ul>
 </div>
+<div id="load"></div>
+
 <!-- <audio src='http://api.soundcloud.com/tracks/175656698/stream?client_id=7d9677620e4d860d055604be6c25d43a' controls="controls"></audio> -->
 <?php get_footer(); ?>

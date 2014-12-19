@@ -114,9 +114,10 @@ function load_songs($track_list){
 			$this_duration = $tra->duration;
 			$wave = $tra->waveform_url;
 			$bpm = $thr->bpm;
+			$dl = $thr->download_url;
 			// echo $this_id;
 			// var_dump($tra);
-			$the_str = '<li data-art="'.$wave.'" data-bpm="'.$bpm.'" data-duration="'.$this_duration.'"data-ID="'.$this_id.'">'.$track_title.'</li>';
+			$the_str = '<li data-art="'.$wave.'" data-bpm="'.$dl.'" data-duration="'.$this_duration.'"data-ID="'.$this_id.'">'.$track_title.'</li>';
 			array_push($track_arry, $the_str);
 		}
 			// echo $bpm . '<br />';

@@ -7,12 +7,14 @@ jQuery(function($){
 	var loaded_tracks = $('#loaded-playlist > ul > li');
 	var volume_controls = $('.v-slider').children('.vo-slider');
 	var wave_scrub = $('.wave-prog');
-
+	var s = $('section');
+	var windowH = $(window).height();
 
 	$(window).on('load', function(){
 		volume_controls.attr('value', 1);
 		fader.attr('value', 0);
 		wave_scrub.attr('value', 0);
+		s.height(windowH);
 	});
 
 	SC.initialize({
