@@ -72,7 +72,7 @@ section{
 .vinyl.acvitve-v::after{
 	border-color: #0ff;
 }
-.vinyl.acvitve-v{
+.deck .vinyl.acvitve-v{
 	-webkit-animation: spin 5s infinite linear;
 	-moz-animation: spin 5s infinite linear;
 	-ms-animation: spin 5s infinite linear;
@@ -117,7 +117,8 @@ section{
 	left: 0; right: 0;
 	margin: auto;
 	bottom: 150px;
-	background-size: 100%;
+	background-size: 100% 100%;
+	/*background-size: 100%;*/
 	background-position: center;
 	background-repeat: no-repeat;
 }
@@ -194,6 +195,10 @@ section{
 	cursor: pointer;
 	border-top: 1px solid #333;
 	border-bottom: 1px solid #333;	
+}
+#loaded-playlist ul li.act-song{
+	background-color: #000 !important;
+	color: #fff;
 }
 #loaded-playlist ul li:nth-of-type(odd){
 	background: #ccc;
@@ -356,23 +361,23 @@ input[type='range']:not(.wave-prog):focus{
 	}
 	.vinyl{
 		top: 50px;
-		left: -85px
+		left: -40px
 	}
 
 	#deck-b .vinyl{
 		left: unset;
-		right: 85px;
+		right: 65px;
 	}
 	#volum{
 		top: 30px;
 	}
 	.time-display{
-		top: -265px;
-		left: -85px;
+		top: -500px;
+		left: -40px;
 	}
 	#deck-b .time-display{
 		left: unset;
-		right: 195px;
+		right: 170px;
 	}
 	#loaded-playlist {
 	  bottom: 0;

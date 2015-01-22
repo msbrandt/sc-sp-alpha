@@ -74,12 +74,9 @@
 <div id="loaded-playlist">
 	<ul>
 	<?php
-		$z = parse_playlist();
-		load_songs($z);
+		load_song_list();
 	?>
 	</ul>
 </div>
-<div id="load"></div>
-
 <!-- <audio src='http://api.soundcloud.com/tracks/175656698/stream?client_id=7d9677620e4d860d055604be6c25d43a' controls="controls"></audio> -->
 <?php get_footer(); ?>

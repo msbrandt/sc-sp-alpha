@@ -78,54 +78,164 @@ function sc_list_page() {
 	include get_template_directory() . '/admin/sc-admin.php';
 }
 
-function parse_playlist(){
-	// $the_file = json_decode( stripslashes( $_GET['data'] ), true );
-	$the_file = file_get_contents(get_template_directory() .'/inc/list1.txt');
-	$rows = explode("\n", $the_file);
-	$sc_list = array();
+function install_table(){
 
+	global $wpdb;
 
-	foreach ($rows as $row) {
-		array_push($sc_list, $row);	 
-	}
-	return $sc_list;
+	$table_name = $wpdb->prefix . 'sc_sp_alpha';
 
-	// exit();
+	$sql = "CREATE TABLE " . $table_name . "(
+		song_id MEDIUMINT NOT NULL AUTO_INCREMENT,
+		sc_id BIGINT NOT NULL,
+		song_title MEDIUMTEXT NOT NULL,
+		song_duration MEDIUMINT NOT NULL,
+		sc_wave MEDIUMTEXT NOT NULL,
+		PRIMARY KEY  song_id (song_id)
+		);";
+	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+	dbDelta( $sql );
 }
-function load_songs($track_list){
+
+add_action( 'init', 'install_table');
+
+function remove_table(){
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'sc_sp_alpha';
+
+	$wpdb->query("DROP TABLE IF EXISTS $table_name;");
+
+}
+add_action( 'switch_theme', 'remove_table');
+
+function select_songs_handler(){
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'sc_sp_alpha';
+	$the_file = json_decode( stripcslashes( $_REQUEST['file_lines']), true);
+
 	require_once get_template_directory() .'/Services/Soundcloud.php';
 	
 	$client = new Services_Soundcloud('7d9677620e4d860d055604be6c25d43a', 'ecbbaf33f2f146a8ebb92d195074e219');
 	$client->setCurlOptions(array(CURLOPT_FOLLOWLOCATION => 1) );
-	foreach ($track_list as $track) {
-		$raw_track = explode('-', $track);
-		$artist = $raw_track[0];
-		$song = $raw_track[1];
-			
-	
-		$tracks = json_decode($client->get('tracks', array('q'=> $track)));	
 
-		$track_arry = array();
+	foreach ($the_file as $f) {
+		$seachTracks = json_decode($client->get('tracks', array('q'=> $f, 'limit'=>5)));
+		
+		foreach ($seachTracks as $track) {
+			$t = $track->title;
+			$t_id = $track->id;
+			$t_wave = $track->waveform_url;
+			$t_d = $track->duration;
 
-		foreach ($tracks as $tra) {
+			$this_str = '<li data-title="'.$t.'" data-art="'.$t_wave.'" data-duration="'.$t_d.'"data-ID="'.$t_id.'">'.$t.'</li>';
+			echo $this_str;
 
-			$track_title = $tra->title;
-			$this_id = $tra->id;
-			$this_duration = $tra->duration;
-			$wave = $tra->waveform_url;
-			$bpm = $thr->bpm;
-			$dl = $thr->download_url;
-			// echo $this_id;
-			// var_dump($tra);
-			$the_str = '<li data-art="'.$wave.'" data-bpm="'.$dl.'" data-duration="'.$this_duration.'"data-ID="'.$this_id.'">'.$track_title.'</li>';
-			array_push($track_arry, $the_str);
 		}
-			// echo $bpm . '<br />';
 
-		echo $track_arry[0];
+	}
+	
+	exit();	
+}
+add_action( 'wp_ajax_select_songs', 'select_songs_handler');
+
+function save_playlist_handler(){
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'sc_sp_alpha';
+	$saved_list = $_REQUEST['track_list'];
+	
+	foreach ($saved_list as $file) {
+		$sc_title = $file['title'];
+		$sc_id = $file['id'];
+		$sc_duration = $file['duration'];
+		$sc_wave = $file['art'];
+
+		$wpdb->insert( 
+			$table_name, 
+			array(
+			'song_id'=> '',
+			'sc_id'=>$sc_id,
+			'song_title'=>$sc_title,
+			'song_duration'=>$sc_duration,
+			'sc_wave'=>$sc_wave
+			),
+			array(
+				'%d',
+				'%d',
+				'%s',
+				'%d',
+				'%s'
+				)
+			);
+	}
+
+	exit();
+}
+add_action( 'wp_ajax_save_playlist', 'save_playlist_handler');
+
+function delete_song_handler(){
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'sc_sp_alpha';
+	$to_delete =  $_REQUEST['delete_data'];
+
+	foreach ($to_delete as $track_id) {
+		$wpdb->delete( $table_name, array( 'sc_id' => $track_id ) );	
+	}
+	
+	exit();
+}
+add_action( 'wp_ajax_delete_song', 'delete_song_handler');
+
+function load_song_list(){
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'sc_sp_alpha';
+
+		
+	$this_q = $wpdb->get_results("SELECT * FROM " . $table_name . "");
+	foreach ($this_q as $s) {
+		$the_str = '<li class="db-list" data-art="'.$s->sc_wave.'" data-duration="'.$s->song_duration.'"data-ID="'.$s->sc_id.'">'.$s->song_title.'</li>';
+		echo $the_str;
 	}
 
 }
+
+// function load_songs($track_list){
+// 	global $wpdb;
+// 	$table_name = $wpdb->prefix . 'sc_sp_alpha';
+
+// 	// var_dump( $track_list );
+// 	require_once get_template_directory() .'/Services/Soundcloud.php';
+	
+// 	$client = new Services_Soundcloud('7d9677620e4d860d055604be6c25d43a', 'ecbbaf33f2f146a8ebb92d195074e219');
+// 	$client->setCurlOptions(array(CURLOPT_FOLLOWLOCATION => 1) );
+	
+// 	foreach ($track_list as $track) {
+// 		$raw_track = explode('-', $track);
+// 		$artist = $raw_track[0];
+// 		$song = $raw_track[1];
+			
+	
+// 		$tracks = json_decode($client->get('tracks', array('q'=> $track)));	
+
+// 		$track_arry = array();
+
+// 		foreach ($tracks as $tra) {
+
+// 			$track_title = $tra->title;
+// 			$this_id = $tra->id;
+// 			$this_duration = $tra->duration;
+// 			$wave = $tra->waveform_url;
+// 			$bpm = $thr->bpm;
+// 			$dl = $thr->download_url;
+// 			// echo $this_id;
+// 			// var_dump($tra);
+// 			$the_str = '<li data-art="'.$wave.'" data-bpm="'.$dl.'" data-duration="'.$this_duration.'"data-ID="'.$this_id.'">'.$track_title.'</li>';
+// 			array_push($track_arry, $the_str);
+// 		}
+// 			// echo $bpm . '<br />';
+
+// 		echo $track_arry[0];
+// 	}
+
+// }
 
 // add_action( 'wp_ajax_nopriv_otn_ogs_query', 'otn_ogs_query' );
 

@@ -14,7 +14,11 @@ jQuery(function($){
 		volume_controls.attr('value', 1);
 		fader.attr('value', 0);
 		wave_scrub.attr('value', 0);
-		s.height(windowH);
+		if(windowH > 1000){
+			s.height(1000);
+		}else{
+			s.height(windowH);
+		}
 	});
 
 	SC.initialize({
@@ -22,7 +26,84 @@ jQuery(function($){
 	});
 
 	activate_btn.on('click', function(e){
-		var tog_btn = $(this),
+		activate_deck($(this));
+	});
+
+	loaded_tracks.on('click', function(e){
+		e.preventDefault();
+		select_track($(this));
+	});
+
+	volume_controls.on('input', function(){
+		change_volume($(this));
+	});
+
+	toggle_btns.click(function(e){
+		e.preventDefault();
+		play_pause(e, true);
+
+	});
+	var act_pos = -1;
+	var loaded_list = $('#loaded-playlist ul li');
+	var ll = loaded_list.length -1;
+	$(window).on('keypress', function(e){
+		var the_key = e.keyCode;
+		var x = e.which;
+		var active_d = $(document).find('.active').parent();
+
+		if(the_key == 37 || the_key == 39){
+			fader.focus();
+		}
+		if(the_key == 38){
+			if(act_pos > 0){
+				act_pos--;
+			}
+
+		}else if(the_key == 40){
+			if(act_pos < ll){
+				act_pos++;
+			}
+		};
+		loaded_list.removeClass('act-song');
+		$(loaded_list[act_pos]).addClass('act-song');
+		// loaded_list.scrollTo(800);
+
+		if(the_key == 13){
+			var to_ad = $(document).find('.act-song');
+			select_track(to_ad);
+		}
+
+		if(x == 32){
+			var active_btn = $(document).find('.active');
+			
+			if (active_btn.length > 0) {
+				var the_tog_deck = active_btn.parent().find('.toggle-button');
+				play_pause(the_tog_deck, false);
+			};
+
+		}else if(x == 96){
+			var the_button = $(document).find('.active-deck-button');
+			// console.log(the_button);
+			if(the_button.hasClass('active')){
+				var deck_to_activate = $(document).find('.active-deck-button').not('.active');
+			}else{
+				var deck_to_activate = $(the_button[0]);
+				
+			}
+			activate_deck(deck_to_activate);
+
+		}else if(x == 8){
+			var decks = $(document).find('.toggle-button');
+			for(var i=0; i<decks.length; i++){
+				var cd = decks[i];
+				play_pause(cd, false);
+			}
+		};
+
+	});
+
+	function activate_deck(button){
+		var tog_btn = button,
 			act_this_deck = tog_btn.parent(),
 			the_vinyl = act_this_deck.find('.vinyl');
 
@@ -34,17 +115,14 @@ jQuery(function($){
 
 		$('audio').removeClass('active-p');
 		the_vinyl.addClass('active-p');
+	}
 
-	});
-
-	loaded_tracks.on('click', function(e){
-		e.preventDefault();
-		var this_track_obj = $(this),
+	function select_track(the_track){
+		var this_track_obj = the_track,
 			this_track_txt = this_track_obj.text(),
 			this_track_id = this_track_obj.data('id'),
 			this_duration = this_track_obj.data('duration'),
 			this_wave = this_track_obj.data('art');
-
 		var l_this_deck = $('.active-deck-button.active').parent(),
 			active_deck = l_this_deck.find('audio');
 
@@ -68,17 +146,17 @@ jQuery(function($){
 			active_deck.load();
 
 		});
-		
-	});
-
-	volume_controls.on('input', function(){
-		var this_control = $(this),
+		$('#loaded-playlist ul li').removeClass('act-song');
+	};
+	function change_volume(controler){
+		var this_control = controler,
 			control_id = this_control.attr('id'),
 			vol_this_deck = $('section').find("[data-volume_control='"+control_id+"']"),
 			volume_level = this_control.val();
 
 		vol_this_deck.find('audio').prop('volume', volume_level);
-	});
+	}
+
 
 	fader.on('input', function(){
 		var fader_value = parseFloat(fader.val());
@@ -149,12 +227,19 @@ jQuery(function($){
 		}
 	});
 
-	toggle_btns.click(function(e){
-		e.preventDefault();
-		var the_toggle = $(e.currentTarget),
-			the_player_id = the_toggle.parent().find('audio').attr('id'),
+	function play_pause(the_deck, is_clicked){
+		// console.log(the_deck);
+		if(is_clicked){
+			var the_toggle = $(the_deck.currentTarget);
+		}else{
+			var the_toggle = $(the_deck);
+		}
+		
+		var the_player_id = the_toggle.parent().find('audio').attr('id'),
 			the_player = document.getElementById(the_player_id),
 			the_vinyl = the_toggle.parent().find('.vinyl');
+
+		// console.log(the_toggle);
 
 		if(the_toggle.hasClass('sc-stop')){
 			the_toggle.removeClass('sc-stop').addClass('sc-play');
@@ -167,10 +252,9 @@ jQuery(function($){
 			the_toggle.children().removeClass('glyphicon-pause').addClass('glyphicon-play');
 			the_vinyl.removeClass('acvitve-v');
 			the_player.pause();
-		};
+		};		
+	}
 
-	});
-	
 
 	function convert_time(time){
 		var minutes = Math.floor((time % 3600000) / 60000);
